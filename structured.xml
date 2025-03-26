@@ -49,6 +49,7 @@
 			<address>
 				<street>Ringvägen 666</street>
 				<city>Nättraby</city>
+				<zipcode />
 			</address>
 		</owner>
 	</building>

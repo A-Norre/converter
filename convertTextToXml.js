@@ -38,9 +38,7 @@ function xmlStructureBuilder(inputFile, outputFile) {
                 const zipcode = parts[3] || "";
             
                 let address = `\t\t<address>\n\t\t\t<street>${street}</street>\n\t\t\t<city>${city}</city>\n`;
-                if (zipcode !== "") {
-                    address += `\t\t\t<zipcode>${zipcode}</zipcode>\n`;
-                }
+                address += zipcode ? `\t\t\t<zipcode>${zipcode}</zipcode>\n` : `\t\t\t<zipcode />\n`;
 
                 address += `\t\t</address>\n`;
             
