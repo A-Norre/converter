@@ -1,6 +1,7 @@
 const fs = require("fs");
 const readline = require("readline");
 const { Converter } = require("../src/converter");
+const { TAGS } = require('../src/utils');
 
 jest.mock("fs");
 jest.mock("readline");
@@ -44,10 +45,10 @@ describe("Converter tests", () => {
 
     expect(writtenContent).toContain("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     expect(writtenContent).toContain("<people>");
-    expect(writtenContent).toContain("<firstName>Anna</firstName>");
-    expect(writtenContent).toContain("<lastName>Karlsson</lastName>");
+    expect(writtenContent).toContain(`<${TAGS.firstName}>Anna</${TAGS.firstName}>`);
+    expect(writtenContent).toContain(`<${TAGS.lastName}>Karlsson</${TAGS.lastName}>`);
     expect(writtenContent).toContain("</people>");
-
+    
     expect(mockWriteStream.end).toHaveBeenCalled();
   });
 
@@ -61,5 +62,12 @@ describe("Converter tests", () => {
     linesToEmit.push("X|Anna|Karlsson");
 
     await expect(converter.convert()).rejects.toThrow();
+  });
+
+  test("throws error if mobile number contains letters", async () => {
+    linesToEmit.push("P|Anna|Karlsson");
+    linesToEmit.push("T|NotOkay|789-000");
+
+    await expect(converter.convert()).rejects.toThrow(/Invalid mobile number format/);
   });
 });

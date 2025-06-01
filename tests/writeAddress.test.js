@@ -1,4 +1,4 @@
-const { writeAddress, TAGS } = require('../src/converter');
+const { writeAddress, TAGS } = require('../src/utils');
 
 test("writeAddress outputs correct address XML", () => {
   const stream = { write: jest.fn() };
@@ -8,11 +8,11 @@ test("writeAddress outputs correct address XML", () => {
 
   const written = stream.write.mock.calls.flat().join("");
 
-  expect(written).toContain(TAGS.addressStart);
+  expect(written).toContain(`<${TAGS.address}>`);
   expect(written).toContain(`<${TAGS.street}>${address.street}</${TAGS.street}>`);
   expect(written).toContain(`<${TAGS.city}>${address.city}</${TAGS.city}>`);
   expect(written).toContain(`<${TAGS.zip}>${address.zip}</${TAGS.zip}>`);
-  expect(written).toContain(TAGS.addressEnd);
+  expect(written).toContain(`</${TAGS.address}>`);
 });
 
 test("writeAddress outputs correct address XML with closed street-tag", () => {
@@ -23,11 +23,11 @@ test("writeAddress outputs correct address XML with closed street-tag", () => {
 
   const written = stream.write.mock.calls.flat().join("");
 
-  expect(written).toContain(TAGS.addressStart);
+  expect(written).toContain(`<${TAGS.address}>`);
   expect(written).toContain(`<${TAGS.street} />`);
   expect(written).toContain(`<${TAGS.city}>${address.city}</${TAGS.city}>`);
   expect(written).toContain(`<${TAGS.zip}>${address.zip}</${TAGS.zip}>`);
-  expect(written).toContain(TAGS.addressEnd);
+  expect(written).toContain(`</${TAGS.address}>`);
 });
 
 test("writeAddress outputs correct address XML with closed city-tag", () => {
@@ -38,11 +38,11 @@ test("writeAddress outputs correct address XML with closed city-tag", () => {
 
   const written = stream.write.mock.calls.flat().join("");
 
-  expect(written).toContain(TAGS.addressStart);
+  expect(written).toContain(`<${TAGS.address}>`);
   expect(written).toContain(`<${TAGS.street}>${address.street}</${TAGS.street}>`);
   expect(written).toContain(`<${TAGS.city} />`);
   expect(written).toContain(`<${TAGS.zip}>${address.zip}</${TAGS.zip}>`);
-  expect(written).toContain(TAGS.addressEnd);
+  expect(written).toContain(`</${TAGS.address}>`);
 });
 
 test("writeAddress outputs correct address XML with closed zip-tag", () => {
@@ -53,9 +53,9 @@ test("writeAddress outputs correct address XML with closed zip-tag", () => {
 
   const written = stream.write.mock.calls.flat().join("");
 
-  expect(written).toContain(TAGS.addressStart);
+  expect(written).toContain(`<${TAGS.address}>`);
   expect(written).toContain(`<${TAGS.street}>${address.street}</${TAGS.street}>`);
   expect(written).toContain(`<${TAGS.city}>${address.city}</${TAGS.city}>`);
   expect(written).toContain(`<${TAGS.zip} />`);
-  expect(written).toContain(TAGS.addressEnd);
+  expect(written).toContain(`</${TAGS.address}>`);
 });

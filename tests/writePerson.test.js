@@ -1,4 +1,4 @@
-const { writePerson, TAGS, NEWLINE } = require('../src/converter');
+const { writePerson, TAGS, NEWLINE } = require('../src/utils');
 
 describe('writePerson', () => {
   let mockStream;
@@ -59,7 +59,8 @@ describe('writePerson', () => {
     writePerson(mockStream, person);
 
     const written = mockStream.write.mock.calls.flat().join('');
-    const f = person.family[0];
+    const familyMember = 0;
+    const f = person.family[familyMember];
 
     expect(written).toContain(`<${TAGS.name}>${f.name}</${TAGS.name}>`);
     expect(written).toContain(`<${TAGS.born}>${f.birthYear}</${TAGS.born}>`);

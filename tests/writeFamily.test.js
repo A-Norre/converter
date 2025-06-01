@@ -1,4 +1,4 @@
-const { writeFamily, TAGS } = require('../src/converter');
+const { writeFamily, TAGS } = require('../src/utils');
 
 test("writeFamily outputs correct family XML", () => {
   const stream = { write: jest.fn() };
@@ -12,9 +12,10 @@ test("writeFamily outputs correct family XML", () => {
   writeFamily(stream, family);
 
   const written = stream.write.mock.calls.flat().join("");
-  const f = family[0];
+  const familyMember = 0;
+  const f = family[familyMember];
 
-  expect(written).toContain(TAGS.familyStart);
+  expect(written).toContain(`<${TAGS.family}>`);
   expect(written).toContain(`<${TAGS.name}>${f.name}</${TAGS.name}>`);
   expect(written).toContain(`<${TAGS.born}>${f.birthYear}</${TAGS.born}>`);
   expect(written).toContain(`<${TAGS.street}>${f.address.street}</${TAGS.street}>`);
@@ -22,7 +23,7 @@ test("writeFamily outputs correct family XML", () => {
   expect(written).toContain(`<${TAGS.zip}>${f.address.zip}</${TAGS.zip}>`);
   expect(written).toContain(`<${TAGS.mobile}>${f.phone.mobile}</${TAGS.mobile}>`);
   expect(written).toContain(`<${TAGS.landline}>${f.phone.landline}</${TAGS.landline}>`);
-  expect(written).toContain(TAGS.familyEnd);
+  expect(written).toContain(`</${TAGS.family}>`);
 });
 
 test("writeFamily outputs family XML with only address", () => {
@@ -30,21 +31,22 @@ test("writeFamily outputs family XML with only address", () => {
   const family = [{
     name: "Elsa",
     birthYear: "1995",
-    address: { street: "Birch Lane", city: "Göteborg", zip: "55555" }
+    address: { street: "Ullevi", city: "Göteborg", zip: "55555" }
   }];
 
   writeFamily(stream, family);
 
   const written = stream.write.mock.calls.flat().join("");
-  const f = family[0];
+  const familyMember = 0;
+  const f = family[familyMember];
 
-  expect(written).toContain(TAGS.familyStart);
+  expect(written).toContain(`<${TAGS.family}>`);
   expect(written).toContain(`<${TAGS.name}>${f.name}</${TAGS.name}>`);
   expect(written).toContain(`<${TAGS.born}>${f.birthYear}</${TAGS.born}>`);
   expect(written).toContain(`<${TAGS.street}>${f.address.street}</${TAGS.street}>`);
   expect(written).toContain(`<${TAGS.city}>${f.address.city}</${TAGS.city}>`);
   expect(written).toContain(`<${TAGS.zip}>${f.address.zip}</${TAGS.zip}>`);
-  expect(written).toContain(TAGS.familyEnd);
+  expect(written).toContain(`</${TAGS.family}>`);
 });
 
 test("writeFamily outputs family XML with only phone", () => {
@@ -58,12 +60,13 @@ test("writeFamily outputs family XML with only phone", () => {
   writeFamily(stream, family);
 
   const written = stream.write.mock.calls.flat().join("");
-  const f = family[0];
+  const familyMember = 0;
+  const f = family[familyMember];
 
-  expect(written).toContain(TAGS.familyStart);
+  expect(written).toContain(`<${TAGS.family}>`);
   expect(written).toContain(`<${TAGS.name}>${f.name}</${TAGS.name}>`);
   expect(written).toContain(`<${TAGS.born}>${f.birthYear}</${TAGS.born}>`);
   expect(written).toContain(`<${TAGS.mobile}>${f.phone.mobile}</${TAGS.mobile}>`);
   expect(written).toContain(`<${TAGS.landline}>${f.phone.landline}</${TAGS.landline}>`);
-  expect(written).toContain(TAGS.familyEnd);
+  expect(written).toContain(`</${TAGS.family}>`);
 });

@@ -1,4 +1,4 @@
-const { writePhone, TAGS } = require('../src/converter');
+const { writePhone, TAGS } = require('../src/utils');
 
 describe("writePhone", () => {
   let stream;
@@ -13,10 +13,10 @@ describe("writePhone", () => {
     writePhone(stream, phone, 0);
 
     const written = stream.write.mock.calls.flat().join("");
-    expect(written).toContain(TAGS.phoneStart);
+    expect(written).toContain(`<${TAGS.phone}>`);
     expect(written).toContain(`<${TAGS.mobile}>${phone.mobile}</${TAGS.mobile}>`);
     expect(written).toContain(`<${TAGS.landline}>${phone.landline}</${TAGS.landline}>`);
-    expect(written).toContain(TAGS.phoneEnd);
+    expect(written).toContain(`</${TAGS.phone}>`);
   });
 
   test("writes self closing tag for mobile if value is missing", () => {

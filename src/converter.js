@@ -1,5 +1,12 @@
 const fs = require("fs");
 const readline = require("readline");
+const {
+  writePerson,
+  validateZip,
+  validatePhoneNumber,
+  TAGS,
+  INDEX,
+} = require("./utils");
 
 class Person {
   constructor(firstName, lastName) {
@@ -33,108 +40,6 @@ class Phone {
     this.mobile = mobile;
     this.landline = landline;
   }
-}
-
-const NEWLINE = "\n";
-const INDENT_SIZE = 2;
-
-const TAGS = {
-  rootStart: `<?xml version="1.0" encoding="UTF-8"?>${NEWLINE}<people>${NEWLINE}`,
-  rootEnd: `</people>${NEWLINE}`,
-  personStart: "<person>",
-  personEnd: "</person>",
-  addressStart: "<address>",
-  addressEnd: "</address>",
-  phoneStart: "<phone>",
-  phoneEnd: "</phone>",
-  familyStart: "<family>",
-  familyEnd: "</family>",
-  firstName: "firstName",
-  lastName: "lastName",
-  street: "street",
-  city: "city",
-  zip: "zip",
-  mobile: "mobile",
-  landline: "landline",
-  name: "name",
-  born: "born"
-};
-
-const INDEX = {
-  P: { firstName: 0, lastName: 1 },
-  F: { name: 0, born: 1 },
-  A: { street: 0, city: 1, zip: 2 },
-  T: { mobile: 0, landline: 1 }
-};
-
-function indent(level) {
-  return " ".repeat(level * INDENT_SIZE);
-}
-
-function escapeXml(text) {
-  if (text === null || text === undefined) return "";
-
-  const str = String(text);
-  const illegalSymbols = /[&<>"'#()[\]{}$%*^=~`\\|@]|[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\uFFFE\uFFFF]/;
-  if (illegalSymbols.test(str)) {
-    throw new Error(`Unaccepted characters in XML: "${str}"`);
-  }
-  return str;
-}
-
-function writeXmlTag(stream, tagName, value, level) {
-  const ind = indent(level);
-  if (value === null || value === undefined || value === "") {
-    stream.write(`${ind}<${tagName} />${NEWLINE}`);
-  } else {
-    stream.write(`${ind}<${tagName}>${escapeXml(value)}</${tagName}>${NEWLINE}`);
-  }
-}
-
-function writeAddress(stream, address, level) {
-  stream.write(`${indent(level)}${TAGS.addressStart}${NEWLINE}`);
-  writeXmlTag(stream, TAGS.street, address.street || "", level + 1);
-  writeXmlTag(stream, TAGS.city, address.city || "", level + 1);
-  writeXmlTag(stream, TAGS.zip, address.zip || "", level + 1);
-  stream.write(`${indent(level)}${TAGS.addressEnd}${NEWLINE}`);
-}
-
-function writePhone(stream, phone, level) {
-  stream.write(`${indent(level)}${TAGS.phoneStart}${NEWLINE}`);
-  writeXmlTag(stream, TAGS.mobile, phone.mobile || "", level + 1);
-  writeXmlTag(stream, TAGS.landline, phone.landline || "", level + 1);
-  stream.write(`${indent(level)}${TAGS.phoneEnd}${NEWLINE}`);
-}
-
-function writeFamily(stream, familyArray) {
-  for (const f of familyArray) {
-    stream.write(`${indent(2)}${TAGS.familyStart}${NEWLINE}`);
-    writeXmlTag(stream, TAGS.name, f.name, 3);
-    writeXmlTag(stream, TAGS.born, f.birthYear, 3);
-    if (f.address) writeAddress(stream, f.address, 3);
-    if (f.phone) writePhone(stream, f.phone, 3);
-    stream.write(`${indent(2)}${TAGS.familyEnd}${NEWLINE}`);
-  }
-}
-
-function writePerson(stream, person) {
-  stream.write(`${indent(1)}${TAGS.personStart}${NEWLINE}`);
-  writeXmlTag(stream, TAGS.firstName, person.firstName, 2);
-  writeXmlTag(stream, TAGS.lastName, person.lastName, 2);
-  if (person.address) writeAddress(stream, person.address, 2);
-  if (person.phone) writePhone(stream, person.phone, 2);
-  if (person.family.length > 0) writeFamily(stream, person.family);
-  stream.write(`${indent(1)}${TAGS.personEnd}${NEWLINE}`);
-}
-
-function validateZip(zip) {
-  if (!zip) return true;
-  return /^[\d\s-]+$/.test(zip);
-}
-
-function validatePhoneNumber(number) {
-  if (!number) return true;
-  return /^[\d\- ]+$/.test(number);
 }
 
 class Converter {
@@ -248,7 +153,7 @@ class Converter {
 
 if (require.main === module) {
   const inputFile = "data/input.txt";
-  const outputFile = "xml/output.xml";
+  const outputFile = "output-xml/output.xml";
 
   const converter = new Converter(inputFile, outputFile);
   converter.convert().then(() => {
@@ -260,16 +165,4 @@ if (require.main === module) {
 
 module.exports = {
   Converter,
-  escapeXml,
-  indent,
-  writeXmlTag,
-  writeAddress,
-  writePhone,
-  writeFamily,
-  writePerson,
-  validateZip,
-  validatePhoneNumber,
-  TAGS,
-  INDEX,
-  NEWLINE
 };
