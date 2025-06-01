@@ -17,7 +17,7 @@ npm install
 
 To run the program use the following command whilst stood in the main folder:
 ```
-npm run converter
+npm run convert
 ```
 
 To run the tests use the following command whilst stood in the main folder:
